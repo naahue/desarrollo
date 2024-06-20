@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario - Nuestro Blog</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            width: 100%;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 1rem;
+        }
+        .countdown {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        #questions {
+            display: none;
+            text-align: left;
+        }
+        .question {
+            margin-bottom: 1rem;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .score {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            text-align: left;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Nuestro Blog</h1>
+    </header>
+    <div class="container">
+        <h2>Cuestionario</h2>
+        <p>Haz click en el botón para iniciar el cuestionario.</p>
+        <button id="startQuizBtn">Iniciar Cuestionario</button>
+        <div id="countdown" class="countdown"></div>
+        <div id="questions">
+            <div class="question">
+                <label for="q1">¿Cuántos integrantes tiene el grupo?</label><br>
+                <input type="number" id="q1" name="q1" required>
+            </div>
+            <div class="question">
+                <label for="q2">¿Quién es el integrante que tiene como hobby ...?</label><br>
+                <input type="text" id="q2" name="q2" required>
+            </div>
+            <div class="question">
+                <label for="q3">¿Cuál es la ciudad de origen del grupo?</label><br>
+                <input type="text" id="q3" name="q3" required>
+            </div>
+            <div class="question">
+                <label for="q4">¿Qué temas cubre nuestro blog?</label><br>
+                <textarea id="q4" name="q4" rows="3" required></textarea>
+            </div>
+            <button id="submitQuizBtn">Finalizar Cuestionario</button>
+        </div>
+        <div id="quizResults" class="score" style="display: none;">
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Nuestro Blog. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        document.getElementById('startQuizBtn').addEventListener('click', function() {
+            document.getElementById('startQuizBtn').style.display = 'none';
+            document.getElementById('countdown').style.display = 'block';
+            document.getElementById('questions').style.display = 'block';
+
+            var countdownElement = document.getElementById('countdown');
+            var timeLeft = 10;
+
+            var countdownTimer = setInterval(function() {
+                timeLeft--;
+                countdownElement.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    countdownElement.style.display = 'none';
+                    countdownElement.textContent = '10';
+                    startQuiz();
+                }
+            }, 1000);
+        });
+
+        function startQuiz() {
+            document.getElementById('questions').style.display = 'block';
+            document.getElementById('submitQuizBtn').addEventListener('click', function() {
+                var score = calculateScore();
+
+                displayResults(score);
+            });
+        }
+
+        function calculateScore() {
+            var score = 0;
+            var q1Answer = parseInt(document.getElementById('q1').value);
+            if (q1Answer === 2) {
+                score += 2;
+            }
+
+            var q2Answer = document.getElementById('q2').value.toLowerCase();
+            if (q2Answer === 'Leandro') {
+                score += 2;
+            }
+
+            var q3Answer = document.getElementById('q3').value.toLowerCase();
+            if (q3Answer === 'Buenos Aires') {
+                score += 2;
+            }
+
+            var q4Answer = document.getElementById('q4').value.toLowerCase();
+            if (q4Answer.includes('experiencias') && q4Answer.includes('conocimientos')) {
+                score += 2;
+            }
+
+
+            return score;
+        }
+
+        function displayResults(score) {
+            var resultsDiv = document.getElementById('quizResults');
+            resultsDiv.style.display = 'block';
+
+            var message = '';
+            if (score === 10) {
+                message = '¡Felicitaciones! Obtuvo el máximo puntaje.';
+            } else if (score >= 7) {
+                message = '¡Muy bien! Obtuvo un puntaje alto.';
+            } else if (score >= 5) {
+                message = 'Bien hecho. Obtuvo un puntaje promedio.';
+            } else if (score >= 3) {
+                message = 'Puede mejorar. Siga explorando nuestro blog.';
+            } else {
+                message = 'Tomate un tiempo para ver nuestro blog y conocernos mejor. ¡Hasta pronto!';
+            }
+
+            resultsDiv.innerHTML = '<p>Puntaje obtenido: ' + score + '</p><p>' + message + '</p>';
+        }
+    </script>
+</body>
+</html>
